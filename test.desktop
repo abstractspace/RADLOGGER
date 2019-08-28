@@ -1,0 +1,5 @@
+[Desktop Entry]
+Name=Test
+Exec=/home/test.py
+Terminal=true
+Type=Application
