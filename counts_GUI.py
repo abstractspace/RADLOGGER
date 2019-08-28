@@ -9,6 +9,10 @@ import pigpio
 import threading
 import csv
 
+#import matplotlib.figure as figure
+#import matplotlib.animation as animation
+#from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+
 import tkinter as tk
 
 def exit_prog():
@@ -25,7 +29,7 @@ def read_counts():
         prev = curr
 
 def read_gps():
-    global utc, lat, lon, mtype, filename
+    global utc, lat, lon, mtype, filename, max_elements
     with open(filename, "w") as file:
         writer = csv.writer(file)
         while True:
@@ -44,17 +48,23 @@ def read_gps():
                     utc.set(gps_message[1])
                     lat.set(gps_message[3])
                     lon.set(gps_message[5])
-                    data = [utc, lat, lon, cps]
+                    data = [utc.get(), lat.get(), lon.get(), cps.get()]
                     #print(data)
                     writer.writerow(data)
-
-
+                    #cps_list.append(cps.get())
+                    # Limit lists to a set number of elements
+                    #cps_list = cps_list[-max_elements:]
+                    # Clear, format, and plot temperature values (in front)
+                    #ax.clear()
+                    #ax.plot(xs, lights, linewidth=2)
+                    
 # declare global variables
 cps = None
 utc = None
 lat = None
 lon = None
 mtype = 'test'
+max_elements = 100
                   
 ser = serial.Serial("/dev/ttyS0")  # open serial port
 ser.baudrate = 9600
@@ -87,11 +97,28 @@ frame = tk.Frame(root)
 # Lay out the main container, specify that we want it to grow with window size
 frame.pack(fill=tk.BOTH, expand=True)
 
+# Create figure for plotting
+#fig = figure.Figure(figsize=(2, 2))
+#fig.subplots_adjust(left=0.1, right=0.8)
+#ax = fig.add_subplot(1, 1, 1)
+
+# Create a Tk Canvas widget out of our figure
+#canvas = FigureCanvasTkAgg(fig, master=frame)
+#canvas_plot = canvas.get_tk_widget()
+
 # Allow middle cell of grid to grow when window is resized
 #frame.columnconfigure(1, weight=1)
 #frame.rowconfigure(1, weight=1)
 
 # Create widgets
+'''
+canvas_plot.grid(   row=2, 
+                    column=3, 
+                    rowspan=2, 
+                    columnspan=2, 
+                    sticky=tk.W+tk.E+tk.N+tk.S)
+'''
+                    
 label_filen = tk.Label(frame, text='Filename:', font=("Courier", 20))
 label_file = tk.Label(frame, text=filename, font=("Courier", 20))
 
