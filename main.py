@@ -46,9 +46,11 @@ if __name__ == "__main__":
     map = smopy.Map(lat_lon_rangemap, z=16)
 
     x, y = map.to_pixels(np.asarray(lata), np.asarray(lona))
+    #x = lona
+    #y = lata
     ax = map.show_mpl(figsize=(8, 8))
-
-    hb = ax.hexbin(x, y, C=z, gridsize=100, cmap='jet', mincnt=0, reduce_C_function = reduce_function)
+    ax = plt.gca()
+    hb = ax.hexbin(x, y, C=z, gridsize=2000, cmap='jet', mincnt=0, reduce_C_function = reduce_function, bins='log')
     cb = plt.colorbar(hb, ax=ax)
     cb.set_label('Counts Per Second')
     ax.set_xlabel('Latitude')
