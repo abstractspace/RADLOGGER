@@ -9,18 +9,22 @@ import pigpio
 import threading
 import csv
 
-#import matplotlib.figure as figure
-#import matplotlib.animation as animation
-#from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+import matplotlib.figure as figure
+import matplotlib.animation as animation
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
 import tkinter as tk
 
+# Dummy function prevents segfault
+def _destroy(event):
+    pass
+
 def exit_prog():
     sys.exit("User exited program")
-    
+
 def read_counts():
     prev = 0
-    curr = 0 
+    curr = 0
     global cps
     while True:
         time.sleep(1.0)
@@ -29,11 +33,11 @@ def read_counts():
         prev = curr
 
 def read_gps():
-    global utc, lat, lon, mtype, filename, max_elements
+    global utc, lat, lon, mtype, filename, max_elements, cps_list, ax, canvas
     with open(filename, "w") as file:
         writer = csv.writer(file)
         while True:
-            
+
                 try:
                     gps_message = ser.readline()
                     #print(gps_message)
@@ -42,7 +46,7 @@ def read_gps():
                     mtype = gps_message[0].split("$")[1]
                 except:
                     time.sleep(1)  # wait 1 second before trying again
-            
+
                 if mtype == "GPRMC":
                     #print(gps_message)
                     utc.set(gps_message[1])
@@ -51,13 +55,14 @@ def read_gps():
                     data = [utc.get(), lat.get(), lon.get(), cps.get()]
                     #print(data)
                     writer.writerow(data)
-                    #cps_list.append(cps.get())
-                    # Limit lists to a set number of elements
-                    #cps_list = cps_list[-max_elements:]
+                    cps_list.append(cps.get())
+                    # Limihttps://www.linuxquestions.org/questions/linux-software-2/set-display-variable-132371/https://www.linuxquestions.org/questions/linux-software-2/set-display-variable-132371/https://www.linuxquestions.org/questions/linux-software-2/set-display-variable-132371/https://www.linuxquestions.org/questions/linux-software-2/set-display-variable-132371/https://www.linuxquestions.org/questions/linux-software-2/set-display-variable-132371/https://www.linuxquestions.org/questions/linux-software-2/set-display-variable-132371/https://www.linuxquestions.org/questions/linux-software-2/set-display-variable-132371/https://www.linuxquestions.org/questions/linux-software-2/set-display-variable-132371/https://www.linuxquestions.org/questions/linux-software-2/set-display-variable-132371/t lists to a set number of elements
+                    cps_list = cps_list[-max_elements:]
                     # Clear, format, and plot temperature values (in front)
-                    #ax.clear()
-                    #ax.plot(xs, lights, linewidth=2)
-                    
+                    print(cps_list)
+                    ax.clear()
+                    ax.plot(cps_list, linewidth=2)
+                    ax.get_lines()[0].set)visible(True)
 # declare global variables
 cps = None
 utc = None
@@ -65,7 +70,8 @@ lat = None
 lon = None
 mtype = 'test'
 max_elements = 100
-                  
+cps_list=[]
+
 ser = serial.Serial("/dev/ttyS0")  # open serial port
 ser.baudrate = 9600
 ser.timeout = 1
@@ -77,7 +83,7 @@ cb.reset_tally()
 
 filename = time.strftime("%Y%m%d-%H%M%S") + '.csv'
 
-ser.reset_input_buffer()      
+ser.reset_input_buffer()
 
 
 # Create the main window
@@ -98,27 +104,23 @@ frame = tk.Frame(root)
 frame.pack(fill=tk.BOTH, expand=True)
 
 # Create figure for plotting
-#fig = figure.Figure(figsize=(2, 2))
-#fig.subplots_adjust(left=0.1, right=0.8)
-#ax = fig.add_subplot(1, 1, 1)
+fig = figure.Figure(figsize=(2, 2))
+fig.subplots_adjust(left=0.1, right=0.8)
+ax = fig.add_subplot(1, 1, 1)
 
 # Create a Tk Canvas widget out of our figure
-#canvas = FigureCanvasTkAgg(fig, master=frame)
-#canvas_plot = canvas.get_tk_widget()
+canvas = FigureCanvasTkAgg(fig, master=frame)
+canvas_plot = canvas.get_tk_widget()
 
-# Allow middle cell of grid to grow when window is resized
+
+# Allow middle cell of grid o grow when window is resized
 #frame.columnconfigure(1, weight=1)
 #frame.rowconfigure(1, weight=1)
 
 # Create widgets
-'''
-canvas_plot.grid(   row=2, 
-                    column=3, 
-                    rowspan=2, 
-                    columnspan=2, 
-                    sticky=tk.W+tk.E+tk.N+tk.S)
-'''
-                    
+
+canvas_plot.grid(   row=0,
+                    column=2, rowspan=5)
 label_filen = tk.Label(frame, text='Filename:', font=("Courier", 20))
 label_file = tk.Label(frame, text=filename, font=("Courier", 20))
 
