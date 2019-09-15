@@ -1,5 +1,5 @@
- #!/usr/bin/env python3
- 
+#!/usr/bin/env python3
+# added this  
 # first call sudo pigpiod
 import sys
 import time
